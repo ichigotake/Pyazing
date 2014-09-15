@@ -33,8 +33,9 @@ public final class CopyToClipboardService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
+            final String text = intent.getStringExtra(Intent.EXTRA_TEXT);
             copyToClipboard(
-                    intent.getStringExtra(Intent.EXTRA_TEXT),
+                    text,
                     intent.getStringExtra(EXTRA_LABEL)
             );
             Handler mainThread = new Handler(Looper.getMainLooper());
@@ -43,7 +44,7 @@ public final class CopyToClipboardService extends IntentService {
                 public void run() {
                     Toast.makeText(
                             getApplicationContext(),
-                            R.string.app_copy_to_clipboard_complete,
+                            getString(R.string.app_copy_to_clipboard_complete, text),
                             Toast.LENGTH_SHORT
                     ).show();
                 }
