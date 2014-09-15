@@ -7,16 +7,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-public final class UploadVideoActivity extends Activity {
+public class UploadMediaActivity extends Activity {
 
-    private final String LOG_TAG = UploadVideoActivity.class.getSimpleName();
+    private final String LOG_TAG = UploadMediaActivity.class.getSimpleName();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
             Uri imageUri = Uri.parse(getIntent().getExtras().get(Intent.EXTRA_STREAM).toString());
-            startService(UploadMediaService.uploadVideo(this, imageUri));
+            String mimeType = getIntent().getType();
+            startService(UploadMediaService.createIntent(this, imageUri, mimeType));
         } catch (NullPointerException e) {
             Log.e(LOG_TAG, "", e);
             Toast.makeText(this, R.string.app_upload_failure, Toast.LENGTH_SHORT).show();

@@ -24,20 +24,13 @@ import java.io.InputStream;
 public final class UploadMediaService extends Service {
 
     public static final String NOTIFICATION_TAG_COPY_TO_CLIPBOARD = "copy_to_clipboard";
+    private static final String EXTRA_MEDIA_URI = "media_uri";
     private final String NOTIFICATION_PROGRESS = "progress";
-    private static final String EXTRA_UPLOAD_MODE = "upload_mode";
 
-    public static Intent uploadImage(Context context, Uri data) {
+    public static Intent createIntent(Context context, Uri data, String mimeType) {
         Intent intent = new Intent(context, UploadMediaService.class);
-        UploadParameter parameter = new UploadParameter(UploadMode.IMAGE, data);
-        intent.putExtra(EXTRA_UPLOAD_MODE, parameter);
-        return intent;
-    }
-
-    public static Intent uploadVideo(Context context, Uri data) {
-        Intent intent = new Intent(context, UploadMediaService.class);
-        UploadParameter parameter = new UploadParameter(UploadMode.IMAGE, data);
-        intent.putExtra(EXTRA_UPLOAD_MODE, parameter);
+        intent.setType(mimeType);
+        intent.putExtra(EXTRA_MEDIA_URI, data);
         return intent;
     }
 
@@ -53,16 +46,23 @@ public final class UploadMediaService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            upload((UploadParameter) intent.getExtras().getParcelable(EXTRA_UPLOAD_MODE));
+            Uri data = intent.getParcelableExtra(EXTRA_MEDIA_URI);
+            upload(new UploadMedia(data, intent.getType()));
         }
         return super.onStartCommand(intent, flags, startId);
     }
 
-    protected void upload(final UploadParameter uploadParameter) {
+    protected void upload(final UploadMedia media) {
         try {
+            String filename;
+            if (media.isVideo() && !media.hasFilenameExtension()) {
+                filename = media.getData().getLastPathSegment() + ".mp4";
+            } else {
+                filename = media.getData().getLastPathSegment();
+            }
+            InputStream inputStream = getContentResolver().openInputStream(media.getData());
             RequestParams params = new RequestParams();
-            InputStream inputStream = getContentResolver().openInputStream(uploadParameter.getContent());
-            params.put(uploadParameter.getUploadMode().getParameter(), inputStream);
+            params.put(media.getUploadMode().getParameter(), inputStream, filename, media.getMimeType());
             AsyncHttpClient client = new AsyncHttpClient();
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
@@ -82,7 +82,7 @@ public final class UploadMediaService extends Service {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                     stopProgressBar();
-                    notifyToFailure(uploadParameter);
+                    notifyToFailure(media);
                 }
             });
         } catch (IOException e) {
@@ -132,22 +132,21 @@ public final class UploadMediaService extends Service {
         );
     }
 
-    private void notifyToFailure(UploadParameter uploadParameter) {
+    private void notifyToFailure(UploadMedia media) {
         Notification notification = new Notification.Builder(this)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.app_upload_failure))
                 .setSmallIcon(R.drawable.ic_launcher)
                 .addAction(R.drawable.ic_launcher,
-                        getString(R.string.app_upload_retry), createRetryUploadIntent(uploadParameter))
+                        getString(R.string.app_upload_retry), createRetryUploadIntent(media))
                 .build();
         NotificationManager notificationManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(R.string.app_name, notification);
     }
 
-    private PendingIntent createRetryUploadIntent(UploadParameter uploadParameter) {
-        Intent intent = new Intent(getApplicationContext(), UploadMediaService.class);
-        intent.putExtra(EXTRA_UPLOAD_MODE, uploadParameter);
+    private PendingIntent createRetryUploadIntent(UploadMedia media) {
+        Intent intent = createIntent(getApplicationContext(), media.getData(), media.getMimeType());
         return PendingIntent.getService(
                 this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
