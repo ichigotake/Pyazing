@@ -122,6 +122,17 @@ public final class UploadMediaService extends Service {
         NotificationManager notificationManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_TAG_COPY_TO_CLIPBOARD, R.string.app_name, notification);
+        Handler mainThread = new Handler(Looper.getMainLooper());
+        mainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(
+                        getApplicationContext(),
+                        getString(R.string.app_upload_succeed),
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
     }
 
     private PendingIntent createCopyToClipboardIntent(String url) {
