@@ -1,13 +1,13 @@
 Pyazing
 =======
 
-Media upload client for Android
+File upload client for Android. - Gyazo, Gifzo compatible.
 
 
 Description
 --------
 
-Upload image and video to [pyazo](https://github.com/uzulla/pyazo)
+Upload image and video to [Pyazo2](https://github.com/uzulla/Pyazo2)
 
 
 Install
