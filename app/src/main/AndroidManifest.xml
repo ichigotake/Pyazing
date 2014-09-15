@@ -1,11 +1,49 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.ichigotake.pyazing">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application android:allowBackup="true"
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher"
         android:theme="@style/AppTheme"
         >
+
+        <activity
+            android:name=".WelcomeActivity"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="net.ichigotake.pyazing.UploadImageActivity"
+            android:label="Pyazing"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="image/*"/>
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="net.ichigotake.pyazing.UploadVideoActivity"
+            android:label="Pyazing"
+            >
+            <intent-filter>
+                    <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="video/*"/>
+            </intent-filter>
+        </activity>
+
+        <service android:name=".CopyToClipboardService"/>
+        <service android:name="net.ichigotake.pyazing.UploadMediaService" />
+
     </application>
 
 </manifest>
