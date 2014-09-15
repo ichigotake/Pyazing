@@ -114,7 +114,7 @@ public final class UploadMediaService extends Service {
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.app_upload_succeed))
                 .setSmallIcon(R.drawable.ic_launcher)
-                .addAction(R.drawable.ic_launcher,
+                .addAction(R.drawable.ic_action_copy,
                         getString(R.string.app_copy_to_clipboard),
                         createCopyToClipboardIntent(url))
                 .setAutoCancel(true)

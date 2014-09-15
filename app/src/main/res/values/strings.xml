@@ -2,7 +2,7 @@
     <string name="app_name">Pyazing</string>
     <string name="app_server_url">http://pyazo.hachiojipm.org</string>
     <string name="app_welcome_message">画像と動画を他のアプリから「共有」してアップロードします。</string>
-    <string name="app_copy_to_clipboard">クリップボードにコピー</string>
+    <string name="app_copy_to_clipboard">コピー</string>
     <string name="app_copy_to_clipboard_complete">クリップボードにコピーしました\n%s</string>
     <string name="app_upload_ignore_file">そのファイルは利用できません</string>
     <string name="app_upload_progress_start">アップロードを開始しました</string>
