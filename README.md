@@ -15,7 +15,7 @@ Sample
 
 [<img src="https://dply.me/iqfapo/button/large" alt="Try it on your device via DeployGate">](https://dply.me/iqfapo#install)
 
-Pyazing is using in Yancha [http://yancha.hachiojipm.org/](http://yancha.hachiojipm.org/)
+Pyazing is using with Pyazo2 [http://pyazo.hachiojipm.org/](http://pyazo.hachiojipm.org/)
 
 
 License
