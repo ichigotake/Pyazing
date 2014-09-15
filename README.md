@@ -13,7 +13,7 @@ Upload image and video to [Pyazo2](https://github.com/uzulla/Pyazo2)
 Sample
 --------
 
-[<img src="https://dply.me/iqfapo/button/large" alt="Try it on your device via DeployGate">](https://dply.me/iqfapo#install)
+[<img src="https://dply.me/iqfapo/button/large" alt="Try it on your device via DeployGate">](https://dply.me/lf3ox5#install)
 
 Pyazing is using with Pyazo2 [http://pyazo.hachiojipm.org/](http://pyazo.hachiojipm.org/)
 
