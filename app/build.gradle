@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    compile 'com.deploygate:sdk:3.1'
     compile 'com.loopj.android:android-async-http:1.4.5'
 }
 
