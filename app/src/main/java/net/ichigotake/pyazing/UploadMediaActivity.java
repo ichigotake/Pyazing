@@ -20,7 +20,7 @@ public class UploadMediaActivity extends Activity {
             startService(UploadMediaService.createIntent(this, imageUri, mimeType));
         } catch (NullPointerException e) {
             Log.e(LOG_TAG, "", e);
-            Toast.makeText(this, R.string.app_upload_failure, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.app_upload_ignore_file, Toast.LENGTH_SHORT).show();
         }
         finish();
     }
