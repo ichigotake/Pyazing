@@ -1,9 +1,29 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.deploygate:gradle:0.6'
+    }
+}
+
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
 
+    def hasReleaseAuthority = new File("${rootDir}/gradle.properties").exists()
+    if (hasReleaseAuthority) {
+        signingConfigs {
+            release {
+                storeFile file(project.properties.storeFile)
+                storePassword project.properties.storePassword
+                keyAlias project.properties.storeAlias
+                keyPassword project.properties.keyPassword
+            }
+        }
+    }
     defaultConfig {
         applicationId "net.ichigotake.pyazing"
         minSdkVersion 16
@@ -15,10 +35,31 @@ android {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (hasReleaseAuthority) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
 
 dependencies {
     compile 'com.loopj.android:android-async-http:1.4.5'
+}
+
+apply plugin: 'deploygate'
+
+// アップロード時のメッセージは /app/DEPLOYGATE を利用している
+def hasDeployGateAuthority = new File("${rootDir}/gradle.properties").exists()
+if (hasDeployGateAuthority) {
+    deploygate {
+        userName = project.properties.deployGateUserName
+        token = project.properties.deployGateToken
+
+        apks {
+            release {
+                sourceFile = file("build/outputs/apk/app-release.apk")
+                message = file("DEPLOYGATE").readLines()[0]
+            }
+        }
+    }
 }

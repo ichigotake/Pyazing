@@ -10,10 +10,12 @@ Description
 Upload image and video to [Pyazo2](https://github.com/uzulla/Pyazo2)
 
 
-Install
+Sample
 --------
 
-TBD
+[<img src="https://dply.me/iqfapo/button/large" alt="Try it on your device via DeployGate">](https://dply.me/iqfapo#install)
+
+Pyazing is using in Yancha [http://yancha.hachiojipm.org/](http://yancha.hachiojipm.org/)
 
 
 License
@@ -26,3 +28,14 @@ Author
 --------
 
 [ichigotake](https://github.com/ichigotake)
+
+
+See also
+--------
+
+Gyazo [http://gyazo.com/ja](http://gyazo.com/ja)
+
+Gifzo [http://gifzo.net/](http://gifzo.net/)
+
+Pyazo2 [https://github.com/uzulla/Pyazo2](https://github.com/uzulla/Pyazo2)
+
