@@ -4,8 +4,6 @@ import android.app.Application;
 
 import com.deploygate.sdk.DeployGate;
 
-import java.util.ArrayList;
-
 public final class PazingApplication extends Application {
 
     @Override

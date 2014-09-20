@@ -1,7 +1,6 @@
 package net.ichigotake.pyazing;
 
 import android.net.Uri;
-import android.util.Log;
 
 class UploadMedia {
 
@@ -30,12 +29,7 @@ class UploadMedia {
     }
 
     boolean hasFilenameExtension() {
-        Log.d("UploadMedia", "" + (data != null));
         return data.getLastPathSegment().contains(".");
-    }
-
-    UploadMode getUploadMode() {
-        return isImage() ? UploadMode.IMAGE : UploadMode.VIDEO;
     }
 
 }

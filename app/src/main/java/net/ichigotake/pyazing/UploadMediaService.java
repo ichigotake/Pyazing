@@ -62,7 +62,8 @@ public final class UploadMediaService extends Service {
             }
             InputStream inputStream = getContentResolver().openInputStream(media.getData());
             RequestParams params = new RequestParams();
-            params.put(media.getUploadMode().getParameter(), inputStream, filename, media.getMimeType());
+            UploadMode uploadMode = media.isImage() ? UploadMode.IMAGE : UploadMode.VIDEO;
+            params.put(uploadMode.getParameter(), inputStream, filename, media.getMimeType());
             AsyncHttpClient client = new AsyncHttpClient();
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
@@ -136,10 +137,9 @@ public final class UploadMediaService extends Service {
     }
 
     private PendingIntent createCopyToClipboardIntent(String url) {
-        return PendingIntent.getService(this, 0, CopyToClipboardService.createIntent(
-                        this,
-                        url,
-                        getString(R.string.app_copy_to_clipboard)), PendingIntent.FLAG_UPDATE_CURRENT
+        Intent clipboardIntent = CopyToClipboardService.createIntent(
+                this, url, getString(R.string.app_copy_to_clipboard));
+        return PendingIntent.getService(this, 0, clipboardIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );
     }
 
