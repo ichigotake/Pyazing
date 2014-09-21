@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import com.dmitriy.tarasov.android.intents.IntentUtils;
 
@@ -38,22 +39,38 @@ final class UploadingNotification {
     }
 
     void notifyToSuccess(String url) {
-        Notification notification = new Notification.Builder(context)
+        Notification.Builder builder = new Notification.Builder(context)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(context.getString(R.string.app_upload_complete))
                 .setSmallIcon(R.drawable.ic_launcher)
-                .addAction(R.drawable.ic_action_copy,
-                        context.getString(R.string.app_copy_to_clipboard),
-                        createCopyToClipboardIntent(url))
-                .addAction(R.drawable.ic_action_share,
-                        context.getString(R.string.app_share),
-                        createShareIntent(url))
-                .setAutoCancel(false)
-                .build();
+                .setAutoCancel(false);
+        // - クリップボードにコピーする導線は最優先で取っておきたい
+        // - Kitkat以降ではOS標準で「共有」から「クリップボードにコピー」出来るので、自前でコピー機能を用意する必要無し
+        // - 人と共有する前にアップロードしたものがプレビュー出来たら安心感があるのでプレビューも簡単にしたい
+        // - TODO: ゆくゆくは largeIcon や RemoteViews を利用したプレビューに置き換えたい
+        // - 今は実験的機能として Kitkat 以降の端末でのみブラウザを開けるようにする
+        // - 通知上にボタンが3つ以上並ぶと窮屈感あるので、2つまでに厳選したい
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            builder.addAction(R.drawable.ic_action_web_site,
+                    context.getString(R.string.app_open_browser),
+                    createOpenBrowserIntent(url));
+        } else {
+            builder.addAction(R.drawable.ic_action_copy,
+                    context.getString(R.string.app_copy_to_clipboard),
+                    createCopyToClipboardIntent(url));
+        }
+        builder.addAction(R.drawable.ic_action_share,
+                context.getString(R.string.app_share),
+                createShareIntent(url));
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_TAG_UPLOAD_COMPLETE, R.string.app_name, notification);
+        notificationManager.notify(NOTIFICATION_TAG_UPLOAD_COMPLETE, R.string.app_name, builder.build());
         Toasts.completeUploading(context);
+    }
+
+    PendingIntent createOpenBrowserIntent(String url) {
+        Intent openBrowserIntent = IntentUtils.openLink(url);
+        return PendingIntent.getActivity(context, 0, openBrowserIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     PendingIntent createShareIntent(String url) {
