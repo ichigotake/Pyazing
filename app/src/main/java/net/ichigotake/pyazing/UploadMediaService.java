@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.dmitriy.tarasov.android.intents.IntentUtils;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -23,8 +24,8 @@ import java.io.InputStream;
 
 public final class UploadMediaService extends Service {
 
-    public static final String NOTIFICATION_TAG_COPY_TO_CLIPBOARD = "copy_to_clipboard";
     private static final String EXTRA_MEDIA_URI = "media_uri";
+    private final String NOTIFICATION_TAG_UPLOAD_COMPLETE = "upload_complete";
     private final String NOTIFICATION_PROGRESS = "progress";
 
     public static Intent createIntent(Context context, Uri data, String mimeType) {
@@ -119,10 +120,13 @@ public final class UploadMediaService extends Service {
                         getString(R.string.app_copy_to_clipboard),
                         createCopyToClipboardIntent(url))
                 .setAutoCancel(true)
+                .addAction(R.drawable.ic_action_share,
+                        getString(R.string.app_share),
+                        createShareIntent(url))
                 .build();
         NotificationManager notificationManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_TAG_COPY_TO_CLIPBOARD, R.string.app_name, notification);
+        notificationManager.notify(NOTIFICATION_TAG_UPLOAD_COMPLETE, R.string.app_name, notification);
         Handler mainThread = new Handler(Looper.getMainLooper());
         mainThread.post(new Runnable() {
             @Override
@@ -134,6 +138,11 @@ public final class UploadMediaService extends Service {
                 ).show();
             }
         });
+    }
+
+    private PendingIntent createShareIntent(String url) {
+        Intent shareIntent = IntentUtils.shareText("", url);
+        return PendingIntent.getActivity(this, 0, shareIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private PendingIntent createCopyToClipboardIntent(String url) {
