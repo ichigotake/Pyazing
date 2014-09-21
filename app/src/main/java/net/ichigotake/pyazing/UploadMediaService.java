@@ -73,8 +73,8 @@ public final class UploadMediaService extends Service {
         // TODO: アップロード前に UploadMediaActivity で設定出来るようにする
         if (media.isImage()) {
             params.put("auto_resize", 1);
-            params.put("width", 500);
-            params.put("height", 500);
+            params.put("width", 1024);
+            params.put("height", 1024);
         }
         AsyncHttpClient client = new AsyncHttpClient();
         Toasts.startUploading(getApplicationContext());
