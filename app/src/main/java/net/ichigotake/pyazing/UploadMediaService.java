@@ -119,10 +119,10 @@ public final class UploadMediaService extends Service {
                 .addAction(R.drawable.ic_action_copy,
                         getString(R.string.app_copy_to_clipboard),
                         createCopyToClipboardIntent(url))
-                .setAutoCancel(true)
                 .addAction(R.drawable.ic_action_share,
                         getString(R.string.app_share),
                         createShareIntent(url))
+                .setAutoCancel(false)
                 .build();
         NotificationManager notificationManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);

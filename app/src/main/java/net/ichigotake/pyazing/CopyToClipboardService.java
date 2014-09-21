@@ -1,7 +1,6 @@
 package net.ichigotake.pyazing;
 
 import android.app.IntentService;
-import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
@@ -49,15 +48,8 @@ public final class CopyToClipboardService extends IntentService {
                     ).show();
                 }
             });
-            cancelNotify();
         }
         stopSelf();
-    }
-
-    private void cancelNotify() {
-        NotificationManager notificationManager = (NotificationManager)
-                getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(UploadMediaService.NOTIFICATION_TAG_COPY_TO_CLIPBOARD, R.string.app_name);
     }
 
     private void copyToClipboard(String text, String label) {
