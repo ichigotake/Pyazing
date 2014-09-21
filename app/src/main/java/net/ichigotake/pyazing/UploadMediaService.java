@@ -1,32 +1,25 @@
 package net.ichigotake.pyazing;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
-import android.widget.Toast;
+import android.util.Log;
 
-import com.dmitriy.tarasov.android.intents.IntentUtils;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public final class UploadMediaService extends Service {
 
     private static final String EXTRA_MEDIA_URI = "media_uri";
-    private final String NOTIFICATION_TAG_UPLOAD_COMPLETE = "upload_complete";
-    private final String NOTIFICATION_PROGRESS = "progress";
+    private final String LOG_TAG = UploadMediaService.class.getSimpleName();
 
     public static Intent createIntent(Context context, Uri data, String mimeType) {
         Intent intent = new Intent(context, UploadMediaService.class);
@@ -34,6 +27,8 @@ public final class UploadMediaService extends Service {
         intent.putExtra(EXTRA_MEDIA_URI, data);
         return intent;
     }
+
+    private UploadingNotification uploadingNotification;
 
     public UploadMediaService() {
         super();
@@ -45,130 +40,51 @@ public final class UploadMediaService extends Service {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        uploadingNotification = new UploadingNotification(this);
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             Uri data = intent.getParcelableExtra(EXTRA_MEDIA_URI);
-            upload(new UploadMedia(data, intent.getType()));
+            try {
+                upload(new UploadMedia(data, intent.getType()));
+            } catch (FileNotFoundException e) {
+                Log.e(LOG_TAG, "", e);
+                Toasts.ignoreFile(getApplicationContext());
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }
 
-    protected void upload(final UploadMedia media) {
-        try {
-            String filename;
-            if (media.isVideo() && !media.hasFilenameExtension()) {
-                filename = media.getData().getLastPathSegment() + ".mp4";
-            } else {
-                filename = media.getData().getLastPathSegment();
-            }
-            InputStream inputStream = getContentResolver().openInputStream(media.getData());
-            RequestParams params = new RequestParams();
-            UploadMode uploadMode = media.isImage() ? UploadMode.IMAGE : UploadMode.VIDEO;
-            params.put(uploadMode.getParameter(), inputStream, filename, media.getMimeType());
-            AsyncHttpClient client = new AsyncHttpClient();
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    startProgressBar();
-                    Toast.makeText(getApplicationContext(),
-                            R.string.app_upload_progress_start, Toast.LENGTH_SHORT).show();
-                }
-            });
-            client.post(this, getString(R.string.app_server_url), params, new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    stopProgressBar();
-                    notifyToSuccess(new String(responseBody));
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    stopProgressBar();
-                    notifyToFailure(media);
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void upload(final UploadMedia media) throws FileNotFoundException {
+        String filename;
+        if (media.isVideo() && !media.hasFilenameExtension()) {
+            filename = media.getData().getLastPathSegment() + ".mp4";
+        } else {
+            filename = media.getData().getLastPathSegment();
         }
-    }
-
-    private void startProgressBar() {
-        Notification notification = new Notification.Builder(this)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.app_upload_progress))
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setProgress(100, 0, true)
-                .setAutoCancel(false)
-                .build();
-        NotificationManager notificationManager = (NotificationManager) getSystemService(
-                Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_PROGRESS, R.string.app_name, notification);
-    }
-
-    private void stopProgressBar() {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(
-                Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(NOTIFICATION_PROGRESS, R.string.app_name);
-    }
-
-    private void notifyToSuccess(String url) {
-        Notification notification = new Notification.Builder(this)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.app_upload_succeed))
-                .setSmallIcon(R.drawable.ic_launcher)
-                .addAction(R.drawable.ic_action_copy,
-                        getString(R.string.app_copy_to_clipboard),
-                        createCopyToClipboardIntent(url))
-                .addAction(R.drawable.ic_action_share,
-                        getString(R.string.app_share),
-                        createShareIntent(url))
-                .setAutoCancel(false)
-                .build();
-        NotificationManager notificationManager = (NotificationManager)
-                getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_TAG_UPLOAD_COMPLETE, R.string.app_name, notification);
-        Handler mainThread = new Handler(Looper.getMainLooper());
-        mainThread.post(new Runnable() {
+        InputStream inputStream = getContentResolver().openInputStream(media.getData());
+        RequestParams params = new RequestParams();
+        UploadMode uploadMode = media.isImage() ? UploadMode.IMAGE : UploadMode.VIDEO;
+        params.put(uploadMode.getParameter(), inputStream, filename, media.getMimeType());
+        AsyncHttpClient client = new AsyncHttpClient();
+        Toasts.startUploading(getApplicationContext());
+        client.post(this, getString(R.string.app_server_url), params, new AsyncHttpResponseHandler() {
             @Override
-            public void run() {
-                Toast.makeText(
-                        getApplicationContext(),
-                        getString(R.string.app_upload_succeed),
-                        Toast.LENGTH_SHORT
-                ).show();
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                uploadingNotification.stopProgress();
+                uploadingNotification.notifyToSuccess(new String(responseBody));
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                uploadingNotification.stopProgress();
+                uploadingNotification.notifyToFailure(media);
             }
         });
-    }
-
-    private PendingIntent createShareIntent(String url) {
-        Intent shareIntent = IntentUtils.shareText("", url);
-        return PendingIntent.getActivity(this, 0, shareIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private PendingIntent createCopyToClipboardIntent(String url) {
-        Intent clipboardIntent = CopyToClipboardService.createIntent(
-                this, url, getString(R.string.app_copy_to_clipboard));
-        return PendingIntent.getService(this, 0, clipboardIntent, PendingIntent.FLAG_UPDATE_CURRENT
-        );
-    }
-
-    private void notifyToFailure(UploadMedia media) {
-        Notification notification = new Notification.Builder(this)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.app_upload_failure))
-                .setSmallIcon(R.drawable.ic_launcher)
-                .addAction(R.drawable.ic_launcher,
-                        getString(R.string.app_upload_retry), createRetryUploadIntent(media))
-                .build();
-        NotificationManager notificationManager = (NotificationManager)
-                getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(R.string.app_name, notification);
-    }
-
-    private PendingIntent createRetryUploadIntent(UploadMedia media) {
-        Intent intent = createIntent(getApplicationContext(), media.getData(), media.getMimeType());
-        return PendingIntent.getService(
-                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 }

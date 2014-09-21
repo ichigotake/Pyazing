@@ -2,7 +2,7 @@ package net.ichigotake.pyazing;
 
 import android.net.Uri;
 
-class UploadMedia {
+final class UploadMedia {
 
     private final Uri data;
     private final String mimeType;

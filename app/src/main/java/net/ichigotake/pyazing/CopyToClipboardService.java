@@ -6,9 +6,6 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.Toast;
 
 public final class CopyToClipboardService extends IntentService {
 
@@ -32,22 +29,12 @@ public final class CopyToClipboardService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            final String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+            String text = intent.getStringExtra(Intent.EXTRA_TEXT);
             copyToClipboard(
                     text,
                     intent.getStringExtra(EXTRA_LABEL)
             );
-            Handler mainThread = new Handler(Looper.getMainLooper());
-            mainThread.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(
-                            getApplicationContext(),
-                            getString(R.string.app_copy_to_clipboard_complete, text),
-                            Toast.LENGTH_SHORT
-                    ).show();
-                }
-            });
+            Toasts.completeCopingText(getApplicationContext(), text);
         }
         stopSelf();
     }

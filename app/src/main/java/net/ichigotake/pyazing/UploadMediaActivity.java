@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-public class UploadMediaActivity extends Activity {
+public final class UploadMediaActivity extends Activity {
 
     private final String LOG_TAG = UploadMediaActivity.class.getSimpleName();
 
@@ -20,7 +20,7 @@ public class UploadMediaActivity extends Activity {
             startService(UploadMediaService.createIntent(this, imageUri, mimeType));
         } catch (NullPointerException e) {
             Log.e(LOG_TAG, "", e);
-            Toast.makeText(this, R.string.app_upload_ignore_file, Toast.LENGTH_SHORT).show();
+            Toasts.ignoreFile(getApplicationContext());
         }
         finish();
     }

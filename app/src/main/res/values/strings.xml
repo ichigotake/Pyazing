@@ -9,6 +9,6 @@
     <string name="app_upload_progress_start">アップロードを開始しました</string>
     <string name="app_upload_progress">アップロードしています</string>
     <string name="app_upload_retry">リトライ</string>
-    <string name="app_upload_succeed">アップロードが完了しました</string>
+    <string name="app_upload_complete">アップロードが完了しました</string>
     <string name="app_upload_failure">アップロードに失敗しました</string>
 </resources>
