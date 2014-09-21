@@ -18,13 +18,13 @@ final class UploadingNotification {
         this.context = context;
     }
 
-    void startProgressBar() {
+    void startProgress() {
         Notification notification = new Notification.Builder(context)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(context.getString(R.string.app_upload_progress))
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setProgress(100, 0, true)
-                .setAutoCancel(false)
+                .setOngoing(true)
                 .build();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(
                 Context.NOTIFICATION_SERVICE);

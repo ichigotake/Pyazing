@@ -72,6 +72,7 @@ public final class UploadMediaService extends Service {
         params.put(uploadMode.getParameter(), inputStream, filename, media.getMimeType());
         AsyncHttpClient client = new AsyncHttpClient();
         Toasts.startUploading(getApplicationContext());
+        uploadingNotification.startProgress();
         client.post(this, getString(R.string.app_server_url), params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
