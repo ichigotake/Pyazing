@@ -70,6 +70,12 @@ public final class UploadMediaService extends Service {
         RequestParams params = new RequestParams();
         UploadMode uploadMode = media.isImage() ? UploadMode.IMAGE : UploadMode.VIDEO;
         params.put(uploadMode.getParameter(), inputStream, filename, media.getMimeType());
+        // TODO: アップロード前に UploadMediaActivity で設定出来るようにする
+        if (media.isImage()) {
+            params.put("auto_resize", 1);
+            params.put("width", 500);
+            params.put("height", 500);
+        }
         AsyncHttpClient client = new AsyncHttpClient();
         Toasts.startUploading(getApplicationContext());
         uploadingNotification.startProgress();
