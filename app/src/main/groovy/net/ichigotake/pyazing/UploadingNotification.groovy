@@ -27,14 +27,12 @@ final class UploadingNotification {
                 .setProgress(100, 0, true)
                 .setOngoing(true)
                 .build();
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(
-                Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_PROGRESS, R.string.app_name, notification);
     }
 
     void stopProgress() {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(
-                Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(NOTIFICATION_PROGRESS, R.string.app_name);
     }
 
@@ -62,8 +60,7 @@ final class UploadingNotification {
         builder.addAction(R.drawable.ic_action_share,
                 context.getString(R.string.app_share),
                 createShareIntent(url));
-        NotificationManager notificationManager = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager;
         notificationManager.notify(NOTIFICATION_TAG_UPLOAD_COMPLETE, R.string.app_name, builder.build());
         Toasts.completeUploading(context);
     }
@@ -93,7 +90,7 @@ final class UploadingNotification {
                 .addAction(R.drawable.ic_launcher,
                         context.getString(R.string.app_upload_retry), createRetryUploadIntent(media))
                 .build();
-        NotificationManager notificationManager = (NotificationManager)
+        NotificationManager notificationManager = (NotificationManager) as NotificationManager
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(R.string.app_name, notification);
     }

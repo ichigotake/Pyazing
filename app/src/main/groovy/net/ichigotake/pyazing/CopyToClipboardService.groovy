@@ -7,27 +7,27 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 
-public final class CopyToClipboardService extends IntentService {
+final class CopyToClipboardService extends IntentService {
 
-    private final static String EXTRA_LABEL = "label";
+    private final static def EXTRA_LABEL = "label";
 
-    public static Intent createIntent(Context context, String text, String label) {
+    static Intent createIntent(Context context, String text, String label) {
         Intent intent = new Intent(context, CopyToClipboardService.class);
         intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.putExtra(EXTRA_LABEL, label);
         return intent;
     }
 
-    public CopyToClipboardService() {
+    CopyToClipboardService() {
         this(CopyToClipboardService.class.getSimpleName());
     }
 
-    public CopyToClipboardService(String name) {
+    CopyToClipboardService(String name) {
         super(name);
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    void onHandleIntent(Intent intent) {
         if (intent != null) {
             String text = intent.getStringExtra(Intent.EXTRA_TEXT);
             copyToClipboard(
@@ -39,10 +39,10 @@ public final class CopyToClipboardService extends IntentService {
         stopSelf();
     }
 
-    private void copyToClipboard(String text, String label) {
+    private def copyToClipboard(String text, String label) {
         ClipData.Item item = new ClipData.Item(text);
-        String[] mimeType = new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN};
-        ClipData clipData = new ClipData(new ClipDescription(label, mimeType), item);
+        def mimeType = [ClipDescription.MIMETYPE_TEXT_PLAIN];
+        ClipData clipData = new ClipData(new ClipDescription(label, mimeType.toArray()), item);
         ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         clipboardManager.setPrimaryClip(clipData);
     }
