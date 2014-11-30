@@ -27,12 +27,12 @@ final class UploadingNotification {
                 .setProgress(100, 0, true)
                 .setOngoing(true)
                 .build();
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager;
         notificationManager.notify(NOTIFICATION_PROGRESS, R.string.app_name, notification);
     }
 
     void stopProgress() {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager;
         notificationManager.cancel(NOTIFICATION_PROGRESS, R.string.app_name);
     }
 
@@ -90,8 +90,7 @@ final class UploadingNotification {
                 .addAction(R.drawable.ic_launcher,
                         context.getString(R.string.app_upload_retry), createRetryUploadIntent(media))
                 .build();
-        NotificationManager notificationManager = (NotificationManager) as NotificationManager
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager;
         notificationManager.notify(R.string.app_name, notification);
     }
 
