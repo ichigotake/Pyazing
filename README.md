@@ -18,16 +18,21 @@ Sample
 Pyazing is using with Pyazo2 [http://pyazo.hachiojipm.org/](http://pyazo.hachiojipm.org/)
 
 
-License
+Develop Environment
 --------
 
-[Apache License v2](LICENSE)
+- AndroidStudio 1.+
 
 
 Author
 --------
 
 [ichigotake](https://github.com/ichigotake)
+
+License
+--------
+
+[Apache License v2](LICENSE)
 
 
 See also

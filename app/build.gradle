@@ -10,8 +10,8 @@ buildscript {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion "20.0.0"
+    compileSdkVersion 21
+    buildToolsVersion "21.0.2"
 
     def hasReleaseAuthority = new File("${rootDir}/gradle.properties").exists()
     if (hasReleaseAuthority) {
@@ -27,17 +27,19 @@ android {
     defaultConfig {
         applicationId "net.ichigotake.pyazing"
         minSdkVersion 16
-        targetSdkVersion 20
+        targetSdkVersion 21
         versionCode 8
         versionName "1.7"
     }
     buildTypes {
         release {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (hasReleaseAuthority) {
                 signingConfig signingConfigs.release
             }
+            zipAlignEnabled true
+            shrinkResources true
         }
     }
 }
