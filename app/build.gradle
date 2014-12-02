@@ -4,10 +4,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.deploygate:gradle:0.6'
+        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
         classpath 'me.champeau.gradle:gradle-groovy-android-plugin:0.3.4'
     }
 }
 
+apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'me.champeau.gradle.groovy-android'
 
