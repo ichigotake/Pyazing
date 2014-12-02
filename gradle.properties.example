@@ -2,8 +2,11 @@
 deployGateUserName=__your_value__
 deployGateToken=__your_value__
 
-storeFile=__your_value__
+storeFile=/opt/Application/pyazing_key.jks
 storeAlias=__your_value__
 storePassword=your_value__
 keyPassword=__your_value__
+
+org.gradle.parallel=true
+org.gradle.parallel.threads=4
 
