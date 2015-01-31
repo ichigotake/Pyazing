@@ -4,14 +4,25 @@ buildscript {
     }
     dependencies {
         classpath 'com.deploygate:gradle:0.6'
+        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
+        classpath 'me.champeau.gradle:gradle-groovy-android-plugin:0.3.4'
     }
 }
 
+apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
+apply plugin: 'me.champeau.gradle.groovy-android'
+
+androidGroovy {
+    options {
+        sourceCompatibility = '1.7'
+        targetCompatibility = '1.7'
+    }
+}
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion "20.0.0"
+    compileSdkVersion 21
+    buildToolsVersion "21.0.2"
 
     def hasReleaseAuthority = new File("${rootDir}/gradle.properties").exists()
     if (hasReleaseAuthority) {
@@ -27,17 +38,19 @@ android {
     defaultConfig {
         applicationId "net.ichigotake.pyazing"
         minSdkVersion 16
-        targetSdkVersion 20
+        targetSdkVersion 21
         versionCode 8
         versionName "1.7"
     }
     buildTypes {
         release {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (hasReleaseAuthority) {
                 signingConfig signingConfigs.release
             }
+            zipAlignEnabled true
+            shrinkResources true
         }
     }
 }
@@ -46,6 +59,7 @@ dependencies {
     compile 'com.deploygate:sdk:3.1'
     compile 'com.dmitriy-tarasov:android-intents:1.1.0'
     compile 'com.loopj.android:android-async-http:1.4.5'
+    compile 'org.codehaus.groovy:groovy:2.4.0-beta-3:grooid'
 }
 
 apply plugin: 'deploygate'

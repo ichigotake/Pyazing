@@ -9,12 +9,10 @@ import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
+import com.loopj.android.http.RequestParams
+import net.ichigotake.pyazing.media.UploadMode
+import net.ichigotake.pyazing.media.UploadModeDetector
 import org.apache.http.Header;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 public final class UploadMediaService extends Service {
 
@@ -35,18 +33,18 @@ public final class UploadMediaService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
+    IBinder onBind(Intent intent) {
         return null;
     }
 
     @Override
-    public void onCreate() {
+    def void onCreate() {
         super.onCreate();
         uploadingNotification = new UploadingNotification(this);
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    def int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             Uri data = intent.getParcelableExtra(EXTRA_MEDIA_URI);
             try {
@@ -68,8 +66,8 @@ public final class UploadMediaService extends Service {
         }
         InputStream inputStream = getContentResolver().openInputStream(media.getData());
         RequestParams params = new RequestParams();
-        UploadMode uploadMode = media.isImage() ? UploadMode.IMAGE : UploadMode.VIDEO;
-        params.put(uploadMode.getParameter(), inputStream, filename, media.getMimeType());
+        UploadMode uploadMode = UploadModeDetector.detect(media);
+        params.put(uploadMode.getRequestParameter(), inputStream, filename, media.getMimeType());
         // TODO: アップロード前に UploadMediaActivity で設定出来るようにする
         if (media.isImage()) {
             params.put("auto_resize", 1);
